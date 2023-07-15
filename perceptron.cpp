@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <cmath>
 
 class Perceptron {
     public:
@@ -12,6 +13,7 @@ class Perceptron {
             initInput();
             initExpectedOut();
             initOut();
+            initNeuronWeights();
 
         }
 
@@ -23,53 +25,61 @@ class Perceptron {
         int idataSize;
         int ioutLength;
 
-        float **ineuronIn;
-        float *ineuronOut;
-        float *iexpectedOut;
+        double **ineuronIn;
+        double *ineuronOut;
+        double *iexpectedOut;
+        double *ineuronWeight;
 
         int initInput();
         int initExpectedOut();
         int initOut();
-        
+        int initNeuronWeights();
+
 };
 
 int Perceptron::initInput() {
-    ineuronIn = new float *[idataSize];
+    ineuronIn = new double *[idataSize];
 
     for (int i = 0; i < idataSize; i++) {
-        ineuronIn[i] = new float[idataLength]();
+        ineuronIn[i] = new double[idataLength]{};
     }
 
     return 0;
 }
 
 int Perceptron::initOut(){
-    ineuronOut = new float[ioutLength]();
+    ineuronOut = new double[ioutLength]{};
 
     return 0;
 }
 
 int Perceptron::initExpectedOut(){
-    iexpectedOut = new float[idataSize]();
+    iexpectedOut = new double[idataSize]{};
+
+    return 0;
+}
+
+int Perceptron::initNeuronWeights(){
+    ineuronWeight = new double[(idataLength * ioutLength)]{};
 
     return 0;
 }
 
 int Perceptron::fillData(){
-    std::ifstream inputFile;
+    std::ifstream dataFile;
 
-    inputFile.open("dataset.dat");
+    dataFile.open("dataset.dat");
 
     for (int i = 0; i < idataSize; i++) 
     {
-        inputFile >> iexpectedOut[i];
+        dataFile >> iexpectedOut[i];
         for (int j = 0; j < idataLength; j++)
         {
-            inputFile >> ineuronIn[i][j];
+            dataFile >> ineuronIn[i][j];
         }
     }
 
-    inputFile.close();
+    dataFile.close();
     return 0;
 }
 

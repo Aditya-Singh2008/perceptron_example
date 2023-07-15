@@ -20,6 +20,9 @@ class Perceptron {
         int fillData();
         void printArray();
 
+        double sigmoid(double num);
+        double sigmoidPrime(double num);
+
     private:
         int idataLength;
         int idataSize;
@@ -34,6 +37,8 @@ class Perceptron {
         int initExpectedOut();
         int initOut();
         int initNeuronWeights();
+
+
 
 };
 
@@ -93,4 +98,18 @@ void Perceptron::printArray(){
         }
         std::cout << "\n";
     }
+}
+
+double Perceptron::sigmoid(double num){
+  
+  double y = 1 / (1 + exp(-num));
+  
+  return y;
+}
+
+double Perceptron::sigmoidPrime(double num){
+  
+  double y = exp(num) / pow(1 + exp(num), 2);
+  
+  return y;
 }

@@ -4,7 +4,7 @@ int main(){
 
     std::cout << "Making New Perceptron\n";
 
-    Perceptron *newPerceptron = new Perceptron(2, 2, 1);
+    Perceptron *newPerceptron = new Perceptron(2, 10, 1);
 
     newPerceptron->fillData();
     newPerceptron->printArray();

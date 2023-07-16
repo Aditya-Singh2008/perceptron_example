@@ -2,6 +2,8 @@
 #include <string>
 #include <fstream>
 #include <cmath>
+#include <cstdlib>
+#include <ctime>
 
 class Perceptron {
     public:
@@ -19,6 +21,10 @@ class Perceptron {
 
         int fillData();
         void printArray();
+        void printOut();
+        double feedForward(int irow);
+        double lossFunction(int irow);
+
 
         double sigmoid(double num);
         double sigmoidPrime(double num);
@@ -28,44 +34,50 @@ class Perceptron {
         int idataSize;
         int ioutLength;
 
-        double **ineuronIn;
-        double *ineuronOut;
-        double *iexpectedOut;
-        double *ineuronWeight;
+        double **dneuronIn;
+        double *dneuronOut;
+        double *dexpectedOut;
+        double *dneuronWeight;
+
+        double dactivation = 0.0;
+        double dloss = 0.0;
 
         int initInput();
         int initExpectedOut();
         int initOut();
         int initNeuronWeights();
 
-
-
 };
 
 int Perceptron::initInput() {
-    ineuronIn = new double *[idataSize];
+    dneuronIn = new double *[idataSize];
 
     for (int i = 0; i < idataSize; i++) {
-        ineuronIn[i] = new double[idataLength]{};
+        dneuronIn[i] = new double[idataLength]{};
     }
 
     return 0;
 }
 
 int Perceptron::initOut(){
-    ineuronOut = new double[ioutLength]{};
+    dneuronOut = new double[ioutLength]{};
 
     return 0;
 }
 
 int Perceptron::initExpectedOut(){
-    iexpectedOut = new double[idataSize]{};
+    dexpectedOut = new double[idataSize]{};
 
     return 0;
 }
 
 int Perceptron::initNeuronWeights(){
-    ineuronWeight = new double[(idataLength * ioutLength)]{};
+    dneuronWeight = new double[(idataLength * ioutLength)];
+    std::srand(std::time(0));
+
+    for(int i = 0; i < (idataLength * ioutLength); i++){
+        dneuronWeight[i] = std::rand() % 21 - 10;
+    }
 
     return 0;
 }
@@ -77,10 +89,10 @@ int Perceptron::fillData(){
 
     for (int i = 0; i < idataSize; i++) 
     {
-        dataFile >> iexpectedOut[i];
+        dataFile >> dexpectedOut[i];
         for (int j = 0; j < idataLength; j++)
         {
-            dataFile >> ineuronIn[i][j];
+            dataFile >> dneuronIn[i][j];
         }
     }
 
@@ -91,25 +103,53 @@ int Perceptron::fillData(){
 void Perceptron::printArray(){
     for (int i = 0; i < idataSize; i++)
     {
-        std::cout << iexpectedOut[i]<< "\n";
+        std::cout << dexpectedOut[i]<< "\n";
         for (int j = 0; j < idataLength; j++)
         {
-            std::cout << ineuronIn[i][j] << " ";
+            std::cout << dneuronIn[i][j] << " ";
         }
         std::cout << "\n";
     }
 }
 
+void Perceptron::printOut(){
+    for (int i = 0; i < idataSize; i++)
+    {
+        std::cout << dneuronOut[i] << "\n";
+    }
+}
+
 double Perceptron::sigmoid(double num){
-  
-  double y = 1 / (1 + exp(-num));
+  double y = 1.0 / (1.0 + exp(-num));
   
   return y;
 }
 
 double Perceptron::sigmoidPrime(double num){
-  
-  double y = exp(num) / pow(1 + exp(num), 2);
+  double y = exp(num) / pow(1.0 + exp(num), 2);
   
   return y;
+}
+
+double Perceptron::feedForward(int irow){
+    double dneuronWeightedSum = 0.0;
+
+    for(int i = 0; i < idataLength; i++){
+        dneuronWeightedSum += dneuronIn[irow][i] * dneuronWeight[i];
+    }
+
+    dactivation  = sigmoid(dneuronWeightedSum);
+
+    dneuronOut[irow] = dactivation;
+
+    return dactivation;
+}
+
+double Perceptron::lossFunction(int irow){
+
+    for(int i = 0; i < idataLength; i++){
+        dloss = (1.0 / 2.0) * pow((dexpectedOut[irow] - dneuronOut[irow]), 2.0);
+    }
+
+    return dloss;
 }

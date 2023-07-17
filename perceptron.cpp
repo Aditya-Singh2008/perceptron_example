@@ -23,7 +23,9 @@ class Perceptron {
         void printArray();
         void printOut();
         double feedForward(int irow);
+
         double lossFunction(int irow);
+        double lossFunctionPrime (int irow);
 
 
         double sigmoid(double num);
@@ -76,7 +78,7 @@ int Perceptron::initNeuronWeights(){
     std::srand(std::time(0));
 
     for(int i = 0; i < (idataLength * ioutLength); i++){
-        dneuronWeight[i] = std::rand() % 21 - 10;
+        dneuronWeight[i] = 1.0; //std::rand() % 21 - 10
     }
 
     return 0;
@@ -146,10 +148,17 @@ double Perceptron::feedForward(int irow){
 }
 
 double Perceptron::lossFunction(int irow){
-
-    for(int i = 0; i < idataLength; i++){
-        dloss = (1.0 / 2.0) * pow((dexpectedOut[irow] - dneuronOut[irow]), 2.0);
-    }
+    dloss = (1.0 / 2.0) * pow((dexpectedOut[irow] - dneuronOut[irow]), 2.0);
 
     return dloss;
+}
+
+double Perceptron::lossFunctionPrime(int irow){
+    double dlossPrime;
+
+    for(int i = 0; i < idataLength; i++){
+        dlossPrime = dexpectedOut[irow] - dneuronOut[irow];
+    }
+
+    return dlossPrime;
 }
